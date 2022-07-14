@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Facebook Login JavaScript Example</title>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="css/bootstrap.min.css">
+<script src="js/jquery.min.js"></script>
+<script src="js/popper.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<!--<script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js"></script>-->
+</head>
+<body>
+<div class="container">
+  <br>
+  <br>
+  <div class="col-md-12" style="margin:auto;">
+
+
+    <div id="status">
+    </div>
+     <br>
+    <div id="userData">
+      
+    </div>
+    <br>
+    <button class="btn btn-primary" id="fbLink" onclick="fbLogin()"><i class="fa fa-facebook-official" aria-hidden="true"></i> Login with facebook</button>
+   
+    <br>
+  </div>
+    
+</div>
+
+<script type="text/javascript">
+window.fbAsyncInit = function(){
+    FB.init({
+      appId:'1131299904319406',
+      cookie: true,
+      xfbml: true,
+      version : 'v13.0'
+    });
+  FB.getLoginStatus(function(response) {
+    if(response.status === 'connected'){
+      getFbUserData();
+    }
+  });
+};
+
+  (function(d, s, id){
+     var js, fjs = d.getElementsByTagName(s)[0];
+     if (d.getElementById(id)) {return;}
+     js = d.createElement(s); js.id = id;
+     js.src = "https://connect.facebook.net/en_US/sdk.js";
+     fjs.parentNode.insertBefore(js, fjs);
+  }(document, 'script', 'facebook-jssdk'));
+
+	
+function fbLogin(){
+  FB.login(function(response) {
+    if (response.authResponse) {
+      getFbUserData();
+    } else {
+     $("#status").html('user cancelled login or did not fully authorize');
+    }
+  },{scope: 'public_profile,email'});
+}
+function fbLogout(){
+ FB.logout(function(response){
+    document.getElementById("fbLink").setAttribute("onclick","fbLogin()");
+    $("#fbLink").html('<i class="fa fa-facebook-official" aria-hidden="true"></i> Login with facebook');
+    $("#status").html("You have been successfully logout from facebook.");
+    setTimeout(()=>{
+       //window.location.reload();
+    },2000);
+  });
+}
+function getFbUserData(){
+  FB.api('/me',{locale:'en_US', fields:'id,first_name,last_name,email,link,gender,locale,picture'},
+    function(response){
+	  console.clear();
+	 console.log(response);
+      document.getElementById("fbLink").setAttribute("onclick","fbLogout()");
+      $("#fbLink").html('Facebook Logout <i class="fa fa-sign-out" aria-hidden="true"></i>');
+      $("#status").html(`<p>id: ${response.id}</p>
+      <p>Name: ${response.first_name} ${response.last_name}</p>
+      <p>Email: ${response.email}</p>
+      <p>Photo:<img src="${response.picture.data.url}" width="${response.picture.data.width}" height="${response.picture.data.height}"></p>`);
+     
+    });
+}	
+	
+</script>
+</body>
+
+
+</html>
