@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta name="google-signin-scope" content="profile email">
+  <meta name="google-signin-client_id"
+    content="405380673874-016n2egv9cukde6bvm3k2tijpmios0ve.apps.googleusercontent.com">
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashbord</title>
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <script src="js/jquery.min.js"></script>
+  <script src="js/popper.min.js"></script>
+  <script src="js/bootstrap.min.js"></script>
+  <script src="https://apis.google.com/js/platform.js" async defer></script>
+ <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js"></script>
+</head>
+
+<body>
+  <div class="bd-example bd-example-modal">
+    <div class="modal" tabindex="-1" role="dialog" style="display: block;">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="user_name"></h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true" id="user_login"></span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <p id="user_logintype"></p>
+            <p id="user_photo"></p>
+            <p id="user_id"></p>
+            <p id="user_email"></p>
+             <p id="test"></p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" id="Logout" class="btn btn-primary">Logout</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+var Loginis;
+setInterval(function() {
+Loginis=localStorage.getItem("userData")?JSON.parse(localStorage.getItem("userData")):null;
+  if(Loginis==null){
+     autoLogout();
+  } else if(!(typeof Loginis.userLoginis === "boolean")){
+       autoLogout();
+  } else {
+    if (Loginis.userLoginis === undefined) {
+      autoLogout();
+    } else if (Loginis.userLoginis === false) {
+      autoLogout();
+    } 
+  }
+}, 400);
+
+
+function autoLogout() {
+  window.localStorage.clear();
+  window.localStorage.setItem("userData", JSON.stringify({'userLoginis':false}));
+  window.top.location.href = "index.html";
+  }
+window.fbAsyncInit = function(){
+    FB.init({
+      appId:'1131299904319406',
+      cookie: true,
+      xfbml: true,
+      version : 'v13.0'
+    });
+  FB.getLoginStatus(function(response) {
+    if(response.status === 'connected'){
+      getFbUserData();
+    }
+  });
+};
+function getFbUserData(){
+  FB.api('/me',{locale:'en_US', fields:'id,first_name,last_name,email,link,gender,locale,picture'},
+    function(response){
+      //console.log(response);
+    });
+}
+  
+    const userData = JSON.parse(window.localStorage.getItem("userData"));
+    document.getElementById("user_name").innerHTML = "Hii.. " + userData.username;
+    document.getElementById("user_id").innerHTML = "Id " + userData.userid;
+    document.getElementById("user_email").innerHTML = "Email Id " + userData.useremail;
+    document.getElementById("user_login").innerHTML = "Login " + userData.userLoginis;
+    document.getElementById("user_photo").innerHTML = `<img src="${userData.userphoto}" style="width: 90px; height: 96px;">`;
+    document.getElementById("user_logintype").innerHTML = "Login Type " + userData.logintype;
+
+document.getElementById("Logout").onclick = function () {
+  if(userData.logintype=="login_with_vkweb"){
+      web_logout();
+    } else if(userData.logintype=="login_with_fb") {
+      fbLogout();
+    } else {
+      Google_signOut();
+    }
+}
+
+function web_logout() {
+let permission = confirm("Are You Sure? Do You Want To Log Out !!");
+    if (permission == true) {
+        window.localStorage.clear();
+        window.localStorage.setItem("vkweb_userLoginis", JSON.stringify({'check':false}));
+        window.top.location.href = "index.html";
+    }
+}
+
+function Google_signOut(){
+let permission = confirm("Are You Sure? Do You Want To Log Out !!");
+  if (permission == true) {
+      window.gapi.load('auth2', () => {
+      window.gapi.auth2
+        .init({
+          client_id: '405380673874-016n2egv9cukde6bvm3k2tijpmios0ve.apps.googleusercontent.com'
+        })
+        .then(() => {
+          window.gapi.auth2
+            .getAuthInstance()
+            .signOut()
+            .then(function() {
+              window.localStorage.clear();
+              window.localStorage.setItem("vkweb_userLoginis", JSON.stringify({'check':false}));
+              window.top.location.href = "index.html";
+            });
+        });
+    });
+  }
+} 
+	  
+function fbLogout(){
+ FB.logout(function(response){
+  let permission = confirm("Are You Sure? Do You Want To Log Out !!");
+  if (permission == true) {
+    window.localStorage.clear();
+    window.localStorage.setItem("vkweb_userLoginis", JSON.stringify({'check':false}));
+    window.top.location.href = "index.html";
+  }
+  });
+}
+	  
+  </script>
+</body>
+
+</html>

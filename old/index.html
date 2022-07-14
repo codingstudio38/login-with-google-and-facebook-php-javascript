@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta name="google-signin-scope" content="profile email">
+  <meta name="google-signin-client_id"
+    content="405380673874-016n2egv9cukde6bvm3k2tijpmios0ve.apps.googleusercontent.com">
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login</title>
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <script src="js/jquery.min.js"></script>
+  <script src="js/popper.min.js"></script>
+  <script src="js/bootstrap.min.js"></script>
+  <script src="https://apis.google.com/js/platform.js" async defer></script>
+  <script src="https://connect.facebook.net/en_US/sdk.js"  async defer crossorigin="anonymous"></script>
+  <style>
+    .success {
+      color: rgb(14, 180, 14);
+    }
+
+    .failed {
+      color: red;
+    }
+
+    body {
+      background-color: #bcefff;
+    }
+
+    .abcs {
+      background-color: rgb(255, 255, 255);
+      padding: 5px;
+      height: 100%;
+      border-radius: 5px;
+    }
+
+    #btn-login,#fb-login-btn {
+      padding: 3px;
+      border-radius: 0px;
+    }
+
+    .abcRioButtonBlue {
+      background-color: #007bff !important;
+      width: 100% !important;
+    }
+
+    .abcRioButtonContents span {
+      font-size: 18px !important;
+      margin-right: 30px;
+    }
+    #login_h4 {
+      text-align: center;
+      background-color: #ffcb00;
+      padding: 5px;
+      border-radius: 5px 5px 0px 0px;
+      margin-bottom: 30px;
+    }
+
+    #RG_form {
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <section class="vh-100">
+      <div class="container py-5 h-100">
+        <div class="row d-flex align-items-center justify-content-center h-100">
+          <div class="col-md-8 col-lg-7 col-xl-6">
+            <img src="https://mdbootstrap.com/img/Photos/new-templates/bootstrap-login-form/draw2.svg" class="img-fluid"
+              alt="Phone image">
+          </div>
+          <div class="col-md-7 col-lg-5 col-xl-5 offset-xl-1 abcs">
+            <form id="login_form">
+              <h4 id="login_h4">LOGIN HERE</h4>
+              <h6 id="alert_msg"></h6>
+              <div class="form-outline mb-4">
+                <input type="email" id="form1Example13" class="form-control form-control-lg" />
+                <label class="form-label" for="form1Example13">Email address</label>
+              </div>
+              <div class="form-outline mb-4">
+                <input type="password" id="form1Example23" class="form-control form-control-lg" />
+                <label class="form-label" for="form1Example23">Password</label>
+              </div>
+              <div class="d-flex justify-content-around align-items-center mb-4">
+                <div class="form-check">
+                  <a href="javascript:void(0);"
+                    onclick="{$('#login_form').fadeOut('slow');$('#login_form')[0].reset();$('#RG_form').fadeIn('slow');}">Sign
+                    Up</a>
+                </div>
+                <a href="javascript:void(0);">Forgot Password?</a>
+              </div>
+
+              <!-- Submit button -->
+              <button type="button" id="btn-login" class="btn btn-primary btn-lg btn-block">Sign in</button>
+              <p class="text-center fw-bold mx-3 mb-0 text-muted"
+                style="margin-top:10px; margin-bottom: 10px !important;">OR</p>
+              <div class="g-signin2" data-onsuccess="onSignIn" data-theme="dark"></div>
+<button type="button" onclick="fbLogin()" id="fb-login-btn" style="margin-top:10px;height: 36px;box-shadow: 0 2px 4px 0 rgb(0 0 0 / 25%);" class="btn btn-primary btn-lg btn-block">
+                <img src="img/fb.png" style="width: 32px; float: left; margin-top: -1.5px; margin-left: -2px;"> 
+                <span style="margin-left: -23px;font-family: Roboto,arial,sans-serif;" id="fbsms" >Sign in</span>
+</button>
+            </form>
+            <form id="RG_form">
+              <h4 id="login_h4">CREATE ACCOUNT</h4>
+              <h6 id="RGalert_msg"></h6>
+              <div class="form-outline mb-4">
+                <input type="text" id="_name" placeholder="Full Name" class="form-control form-control-lg" />
+              </div>
+              <div class="form-outline mb-4">
+                <input type="email" id="_email" placeholder="Email Id" class="form-control form-control-lg" />
+              </div>
+              <div class="form-outline mb-4">
+                <input type="text" id="_phone" placeholder="Phone No" class="form-control form-control-lg" />
+              </div>
+              <div class="form-outline mb-4">
+                <input type="password" id="_password" placeholder="Password" class="form-control form-control-lg" />
+              </div>
+              <div class="d-flex justify-content-around align-items-center mb-4">
+                <a href="javascript:void(0);"
+                  onclick="{$('#RG_form').fadeOut('slow');$('#RG_form')[0].reset();$('#login_form').fadeIn('slow');}">Sign
+                  In</a>
+              </div>
+              <!-- Submit button -->
+              <button type="button" id="btn-register" class="btn btn-primary btn-lg btn-block">Create New</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</body>
+
+<script>
+var Loginis;
+setInterval(function() {
+Loginis=localStorage.getItem("userData")?JSON.parse(localStorage.getItem("userData")):null;
+  if(Loginis==null){
+     autoLogout();
+  } else if(!(typeof Loginis.userLoginis === "boolean")){
+       autoLogout();
+  } else {
+    if (Loginis.userLoginis === undefined) {
+      autoLogout();
+    } else if (Loginis.userLoginis === false) {
+      autoLogout();
+    }  else if (Loginis.userLoginis === true) {
+      window.top.location.href = "dashboard.html";
+    }
+  }
+}, 400);
+function autoLogout(){
+  window.localStorage.clear();
+  window.localStorage.setItem("userData", JSON.stringify({'userLoginis':false}));
+}
+	
+window.fbAsyncInit = function(){
+    FB.init({
+      appId:'1131299904319406',
+      cookie: true,
+      xfbml: true,
+      version : 'v13.0'
+    });
+  FB.getLoginStatus(function(response) {
+    if(response.status === 'connected'){
+      getFbUserData();
+    }
+  });
+};
+function fbLogin(){
+  FB.login(function(response) {
+    if (response.authResponse) {
+      getFbUserData();
+    } else {
+     $("#alert_msg").html(`<p class="failed">user cancelled login or did not fully authorize</p>`);
+    }
+  },{scope: 'public_profile,email'});
+}
+function getFbUserData(){
+  FB.api('/me',{locale:'en_US', fields:'id,first_name,last_name,email,link,gender,locale,picture'},
+    function(response){
+	  let Fobj = { G_id: response.id, G_name: response.first_name +" "+ response.last_name,  G_givenname: response.first_name +" "+ response.last_name, G_familyname:"login_with_fb", G_photo: response.picture.data.url, G_email: response.email, G_idtoken:"login_with_fb", method: "facebook_login", login_type: "login_with_fb", pwd: "login_with_fb", tel: "login_with_fb" };
+	$("#fbsms").html("Signed in");
+	fetch('app/login.php', {
+      method: 'POST',
+      headers: { 'Content-type': 'application/json', },
+      body: JSON.stringify(Fobj),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+		console.clear();
+		//console.log(data);return;
+        window.localStorage.clear();
+        $("#alert_msg").html("");
+        if (data[0].status == "success") {
+          $("#alert_msg").html(`<p class="success">${data[0].message}</p>`);
+          $("#fbsms").html("Signed in");
+          window.localStorage.clear();
+          window.localStorage.setItem("userData", JSON.stringify(data[0]));
+          window.top.location.href = "dashboard.html";
+        } else {
+          window.localStorage.clear();
+          window.localStorage.setItem("userData", JSON.stringify({'userLoginis':false}));
+          $("#alert_msg").html(`<p class="failed">${data[0].message}</p>`);
+          setTimeout(() => { $("#alert_msg").html(""); }, 2000);
+        }
+      })
+      .catch((error) => { console.log(error); console.log("Can't fetching facebook data") });
+    ///////////facebook data send end////////////
+    });
+}
+
+  function onSignIn(googleUser) {
+	var profile = googleUser.getBasicProfile();
+    var id_token = googleUser.getAuthResponse().id_token;
+    let Gobj = {
+      G_id: profile.getId(),
+      G_name: profile.getName(),
+      G_givenname: profile.getGivenName(),
+      G_familyname: profile.getFamilyName(),
+      G_photo: profile.getImageUrl(),
+      G_email: profile.getEmail(),
+      G_idtoken: id_token,
+      method: "google_login",
+      login_type: "login_with_google",
+      pwd: "login_with_google",
+      tel: "login_with_google",
+    };
+	////////////google data send start///////////
+    fetch('app/login.php', {
+      method: 'POST',
+      headers: { 'Content-type': 'application/json', },
+      body: JSON.stringify(Gobj),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+		console.clear();
+        window.localStorage.clear();
+        $("#alert_msg").html("");
+        if (data[0].status == "success") {
+          $("#alert_msg").html(`<p class="success">${data[0].message}</p>`);
+          // for (let [key, value] of Object.entries(data[0])) {
+          //   localStorage.setItem(key, value);
+          // }
+          window.localStorage.clear();
+          window.localStorage.setItem("userData", JSON.stringify(data[0]));
+          window.top.location.href = "dashboard.html";
+        } else {
+          window.localStorage.clear();
+          window.localStorage.setItem("userData", JSON.stringify({'userLoginis':false}));
+          $("#alert_msg").html(`<p class="failed">${data[0].message}</p>`);
+          setTimeout(() => { $("#alert_msg").html(""); }, 2000);
+        }
+      })
+      .catch((error) => { console.log(error); console.log("Can't fetching google data") });
+    ///////////google data send end////////////
+  }
+
+  $(document).on("click", "#btn-login", function () {
+    let obj = {
+      username: document.getElementById("form1Example13").value,
+      password: document.getElementById("form1Example23").value,
+      method: "weLogin",
+    };
+    if (obj.value == "") {
+      alert("Enter Your Username Name..!!"); exit;
+    } else if (obj.value == "") {
+      alert("Enter Your Password..!!"); exit;
+    } else {
+      ////////////login data send start///////////
+      fetch('app/login.php', {
+        method: 'POST',
+        headers: { 'Content-type': 'application/json', },
+        body: JSON.stringify(obj),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+		  console.clear();
+          $("#alert_msg").html("");
+          if (data[0].status == "success") {
+            window.localStorage.clear();
+            $("#alert_msg").html(`<p class="success">${data[0].message}</p>`);
+            // for (let [key, value] of Object.entries(data[0])) {
+            //   localStorage.setItem(key, value);
+            // }
+            window.localStorage.clear();
+            window.localStorage.setItem("userData", JSON.stringify(data[0]));
+            window.top.location.href = "dashboard.html";
+          } else {
+            window.localStorage.clear();
+            window.localStorage.setItem("userData", JSON.stringify({'userLoginis':false}));
+            $("#alert_msg").html(`<p class="failed">${data[0].message}</p>`);
+            setTimeout(() => { $("#alert_msg").html(""); }, 2000);
+          }
+        })
+        .catch((error) => { console.log(error); console.log("Can't fetching login data") });
+      ///////////login data send end////////////
+    }
+  });
+
+  $(document).on("click", "#btn-register", function () {
+    let Vobj = {
+      G_id: "login_with_vkweb",
+      G_name: document.getElementById("_name").value,
+      G_givenname: "login_with_vkweb",
+      G_familyname: "login_with_vkweb",
+      G_photo: "login_with_vkweb",
+      G_email: document.getElementById("_email").value,
+      G_idtoken: "login_with_vkweb",
+      login_type: "login_with_vkweb",
+      pwd: document.getElementById("_password").value,
+      tel: document.getElementById("_phone").value,
+      method: "register_Insert",
+    };
+    if (Vobj.G_name == "") {
+      alert("Enter Your Name..!!"); exit;
+    } else if (Vobj.G_email == "") {
+      alert("Enter Your Email Id..!!"); exit;
+    } else if (Vobj.pwd == "") {
+      alert("Enter Your Password..!!"); exit;
+    } else if (Vobj.tel == "") {
+      alert("Enter Your Phone..!!"); exit;
+    } else {
+      ///////////register data send start///////////
+      fetch('app/login.php', {
+        method: 'POST',
+        headers: { 'Content-type': 'application/json', },
+        body: JSON.stringify(Vobj),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+		  console.clear();
+          window.localStorage.clear();
+          $("#RGalert_msg").html("");
+          if (data[0].status == "success") {
+            $("#RGalert_msg").html(`<p class="success">${data[0].message}</p>`);
+            $('#RG_form')[0].reset();
+            setTimeout(() => { $("#RGalert_msg").html(""); }, 2000);
+          } else {
+            $("#RGalert_msg").html(`<p class="failed">${data[0].message}</p>`);
+            setTimeout(() => { $("#RGalert_msg").html(""); }, 2000);
+          }
+        })
+        .catch((error) => { console.log(error); console.log("Can't fetching register data") });
+      ///////////register data send end////////////
+    }
+  });
+</script>
+
+</html>
